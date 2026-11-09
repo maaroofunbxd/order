@@ -1,0 +1,41 @@
+program sorting
+
+function random_numbers(n):
+    give random_list(n, 1, 1000)
+end
+
+function merge(left, right):
+    let out be []
+    let i be 0
+    let j be 0
+    while i < length(left) and j < length(right):
+        if left[i] <= right[j]:
+            append(out, left[i])
+            i becomes i + 1
+        else:
+            append(out, right[j])
+            j becomes j + 1
+        end
+    end
+    while i < length(left):
+        append(out, left[i])
+        i becomes i + 1
+    end
+    while j < length(right):
+        append(out, right[j])
+        j becomes j + 1
+    end
+    give out
+end
+
+function merge_sort(numbers):
+    if length(numbers) <= 1:
+        give numbers
+    end
+    let mid be floor(length(numbers) / 2)
+    let left be merge_sort(slice(numbers, 0, mid))
+    let right be merge_sort(slice(numbers, mid, length(numbers)))
+    give merge(left, right)
+end
+
+measure merge_sort with random_numbers at 200, 400, 800, 1600

@@ -1,0 +1,39 @@
+program basics
+
+# A quick tour: lists, maps, sets, text, and the built-ins, all printing
+# so the test suite can check the answers.
+
+function main():
+    let xs be [3, 1, 2]
+    sort(xs)
+    show xs
+    show sorted([5, 2, 9])
+
+    let counts be {}
+    for each word in ["a", "b", "a"]:
+        if has(counts, word):
+            counts[word] becomes counts[word] + 1
+        else:
+            counts[word] becomes 1
+        end
+    end
+    show counts
+    show join(keys(counts), ",")
+
+    let seen be set()
+    add(seen, 1)
+    add(seen, 1)
+    add(seen, 2)
+    show length(seen)
+
+    show slice("hello", 1, 4)
+    show "ell" in "hello"
+    show 3 in [1, 2, 3]
+    show upper("hi")
+    show range(3)
+
+    let letters be chars("cab")
+    reverse(letters)
+    show letters
+    show text(1 + 2)
+end

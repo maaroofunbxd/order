@@ -1,0 +1,23 @@
+program searching
+
+function random_numbers(n):
+    give random_list(n, 1, 1000000)
+end
+
+function linear_search(numbers, target):
+    let i be 0
+    while i < length(numbers):
+        if numbers[i] == target:
+            give i
+        end
+        i becomes i + 1
+    end
+    give -1
+end
+
+# The target is never present, so this measures the worst case.
+function search(numbers):
+    give linear_search(numbers, -1)
+end
+
+measure search with random_numbers at 500, 1000, 2000, 4000

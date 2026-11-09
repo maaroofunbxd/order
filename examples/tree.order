@@ -1,0 +1,55 @@
+program trees
+
+# A node is [value, left, right].  `nothing` is an empty branch.
+
+function build(low, high):
+    if low > high:
+        give nothing
+    end
+    let mid be floor((low + high) / 2)
+    give [mid, build(low, mid - 1), build(mid + 1, high)]
+end
+
+function chain(n):
+    if n == 0:
+        give nothing
+    end
+    give [n, nothing, chain(n - 1)]
+end
+
+function count(node):
+    if node == nothing:
+        give 0
+    end
+    give 1 + count(node[1]) + count(node[2])
+end
+
+function in_order(node, out):
+    if node == nothing:
+        give out
+    end
+    in_order(node[1], out)
+    append(out, node[0])
+    in_order(node[2], out)
+    give out
+end
+
+function balanced_input(n):
+    give build(1, n)
+end
+
+function chain_input(n):
+    give chain(n)
+end
+
+function main():
+    let tree be build(1, 7)
+    let out be []
+    show in_order(tree, out)
+    show count(tree)
+end
+
+# Same amount of time, very different amounts of stack.
+# (Sizes stop at 800 because the interpreter caps recursion at 900.)
+measure count with balanced_input at 100, 200, 400, 800
+measure count with chain_input at 100, 200, 400, 800

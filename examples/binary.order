@@ -1,0 +1,28 @@
+program searching
+
+function sorted_numbers(n):
+    give sorted_list(n)
+end
+
+function binary_search(numbers, target):
+    let low be 0
+    let high be length(numbers) - 1
+    while low <= high:
+        let mid be floor((low + high) / 2)
+        if numbers[mid] == target:
+            give mid
+        end
+        if numbers[mid] < target:
+            low becomes mid + 1
+        else:
+            high becomes mid - 1
+        end
+    end
+    give -1
+end
+
+function search(numbers):
+    give binary_search(numbers, -1)
+end
+
+measure search with sorted_numbers at 1000, 2000, 4000, 8000

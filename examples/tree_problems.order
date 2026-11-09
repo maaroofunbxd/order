@@ -1,0 +1,207 @@
+program tree_problems
+
+# ---------------------------------------------------------------------------
+# The encoding
+# ---------------------------------------------------------------------------
+# A node is a 3-element list:   [value, left, right]
+# An empty tree is               nothing
+#
+# Order has no records, so the names live in these helper functions instead
+# of in the data.  Write them once, at the top, and everything below reads
+# like it has fields.
+
+function node(value, left, right):
+    give [value, left, right]
+end
+
+function leaf(value):
+    give [value, nothing, nothing]
+end
+
+function is_empty(t):
+    give t == nothing
+end
+
+function value_of(t):
+    give t[0]
+end
+
+function left_of(t):
+    give t[1]
+end
+
+function right_of(t):
+    give t[2]
+end
+
+# ---------------------------------------------------------------------------
+# The recursion template
+# ---------------------------------------------------------------------------
+# Every tree function has the same shape: check for empty first, then recurse
+# on both sides.  If you write the empty case first and never forget it, tree
+# recursion stops being scary.
+
+function count(t):
+    if is_empty(t):
+        give 0
+    end
+    give 1 + count(left_of(t)) + count(right_of(t))
+end
+
+function total(t):
+    if is_empty(t):
+        give 0
+    end
+    give value_of(t) + total(left_of(t)) + total(right_of(t))
+end
+
+function height(t):
+    if is_empty(t):
+        give 0
+    end
+    give 1 + max([height(left_of(t)), height(right_of(t))])
+end
+
+# ---------------------------------------------------------------------------
+# Traversals
+# ---------------------------------------------------------------------------
+# An accumulator list is the idiom for collecting: pass it down, append to it,
+# and give it back.  Lists are mutable, so every call appends to the same one.
+
+function in_order(t, out):
+    if is_empty(t):
+        give out
+    end
+    in_order(left_of(t), out)
+    append(out, value_of(t))
+    in_order(right_of(t), out)
+    give out
+end
+
+function pre_order(t, out):
+    if is_empty(t):
+        give out
+    end
+    append(out, value_of(t))
+    pre_order(left_of(t), out)
+    pre_order(right_of(t), out)
+    give out
+end
+
+# Level order needs a queue.  There is no popleft, so use a list plus a head
+# index that walks forward.  Removing from the front with slice() would cost
+# O(n) each time and turn BFS into O(n^2).
+
+function level_order(t):
+    let out be []
+    if is_empty(t):
+        give out
+    end
+    let queue be [t]
+    let head be 0
+    while head < length(queue):
+        let current be queue[head]
+        head becomes head + 1
+        append(out, value_of(current))
+        if not is_empty(left_of(current)):
+            append(queue, left_of(current))
+        end
+        if not is_empty(right_of(current)):
+            append(queue, right_of(current))
+        end
+    end
+    give out
+end
+
+# ---------------------------------------------------------------------------
+# Building
+# ---------------------------------------------------------------------------
+
+function insert(t, v):
+    if is_empty(t):
+        give leaf(v)
+    end
+    if v < value_of(t):
+        give node(value_of(t), insert(left_of(t), v), right_of(t))
+    end
+    give node(value_of(t), left_of(t), insert(right_of(t), v))
+end
+
+function build_from(values):
+    let t be nothing
+    for each v in values:
+        t becomes insert(t, v)
+    end
+    give t
+end
+
+# ---------------------------------------------------------------------------
+# Classic problems
+# ---------------------------------------------------------------------------
+
+function in_range(t, low, high):
+    if is_empty(t):
+        give true
+    end
+    let v be value_of(t)
+    if v <= low or v >= high:
+        give false
+    end
+    give in_range(left_of(t), low, v) and in_range(right_of(t), v, high)
+end
+
+function is_bst(t):
+    give in_range(t, -1000000, 1000000)
+end
+
+function lca(t, a, b):
+    let v be value_of(t)
+    if a < v and b < v:
+        give lca(left_of(t), a, b)
+    end
+    if a > v and b > v:
+        give lca(right_of(t), a, b)
+    end
+    give v
+end
+
+# Diameter needs two things back from each call: the height, and the best
+# diameter seen so far.  There are no multiple return values, so return a
+# list and index it.  This is the ugliest thing in the file, and it is the
+# clearest argument for adding records.
+
+function measure_of(t):
+    if is_empty(t):
+        give [0, 0]
+    end
+    let l be measure_of(left_of(t))
+    let r be measure_of(right_of(t))
+    let through_root be l[0] + r[0] + 1
+    let best be max([through_root, l[1], r[1]])
+    give [1 + max([l[0], r[0]]), best]
+end
+
+function diameter(t):
+    give measure_of(t)[1]
+end
+
+# ---------------------------------------------------------------------------
+
+function main():
+    let t be build_from([8, 3, 10, 1, 6, 14, 4, 7, 13])
+
+    show in_order(t, [])
+    show pre_order(t, [])
+    show level_order(t)
+
+    show count(t)
+    show total(t)
+    show height(t)
+    show diameter(t)
+
+    show is_bst(t)
+    show is_bst(node(1, leaf(2), leaf(3)))
+
+    show lca(t, 4, 7)
+    show lca(t, 1, 7)
+end

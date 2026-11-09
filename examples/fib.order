@@ -1,0 +1,16 @@
+program fibonacci
+
+# The generator does not have to make a list.  Here it just passes n
+# through, so `fib` is measured at four sizes of n.
+function counting(n):
+    give n
+end
+
+function fib(n):
+    if n < 2:
+        give n
+    end
+    give fib(n - 1) + fib(n - 2)
+end
+
+measure fib with counting at 16, 18, 20, 22

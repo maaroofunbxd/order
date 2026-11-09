@@ -1,0 +1,14 @@
+program constant
+
+function random_numbers(n):
+    give random_list(n, 1, 1000)
+end
+
+function first_of(numbers):
+    if length(numbers) == 0:
+        give nothing
+    end
+    give numbers[0]
+end
+
+measure first_of with random_numbers at 1000, 2000, 4000, 8000
